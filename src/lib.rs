@@ -64,6 +64,8 @@ pub enum Constants {
     ZMQ_MAXMSGSIZE        = 22,
     ZMQ_SNDHWM            = 23,
     ZMQ_RCVHWM            = 24,
+    ZMQ_RCVTIMEO          = 27,
+    ZMQ_SNDTIMEO          = 28,
 
     ZMQ_MAX_VSM_SIZE      = 30,
     ZMQ_DELIMITER         = 31,
@@ -105,6 +107,8 @@ impl Constants {
             22        => Constants::ZMQ_MAXMSGSIZE,
             23        => Constants::ZMQ_SNDHWM,
             24        => Constants::ZMQ_RCVHWM,
+            27        => Constants::ZMQ_RCVTIMEO,
+            28        => Constants::ZMQ_SNDTIMEO,
 
             30        => Constants::ZMQ_MAX_VSM_SIZE,
             31        => Constants::ZMQ_DELIMITER,
@@ -507,6 +511,14 @@ impl Socket {
         setsockopt_i64(self.sock, Constants::ZMQ_MAXMSGSIZE.to_raw(), value)
     }
 
+    pub fn set_rcvtimeo(&self, value: i32) -> Result<(), Error> {
+        setsockopt_i32(self.sock, Constants::ZMQ_RCVTIMEO.to_raw(), value)
+    }
+
+    pub fn set_sndtimeo(&self, value: i32) -> Result<(), Error> {
+        setsockopt_i32(self.sock, Constants::ZMQ_SNDTIMEO.to_raw(), value)
+    }
+
     pub fn set_sndhwm(&self, value: i32) -> Result<(), Error> {
         setsockopt_i32(self.sock, Constants::ZMQ_SNDHWM.to_raw(), value)
     }
@@ -757,7 +769,7 @@ impl fmt::Debug for Error {
 
 macro_rules! getsockopt_num(
     ($name:ident, $c_ty:ty, $ty:ty) => (
-        #[allow(trivial_casts)]    
+        #[allow(trivial_casts)]
         fn $name(sock: *mut libc::c_void, opt: c_int) -> Result<$ty, Error> {
             unsafe {
                 let mut value: $c_ty = 0;
