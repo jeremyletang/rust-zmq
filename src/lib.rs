@@ -517,7 +517,7 @@ impl Socket {
 
     pub fn set_probe_router(&self, value: bool) -> Result<(), Error> {
         let value = if value { 1i32 } else { 0i32 };
-        setsockopt_i32(self.sock, Constants::ZMQ_ROUTER_MANDATORY.to_raw(), value)
+        setsockopt_i32(self.sock, Constants::ZMQ_PROBE_ROUTER.to_raw(), value)
     }
 
     pub fn set_router_mandatory(&self, value: bool) -> Result<(), Error> {
